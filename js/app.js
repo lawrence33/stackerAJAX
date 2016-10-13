@@ -106,8 +106,14 @@ function topAnswerers (topAns) {
 		type: 'GET',
 		data: params
 	})
+	.done(function(result){
+		var yourResults = 'Your ' +topAns+ ' search, returned ' + result.items.length + ' results.';
+		console.log(result.items);
+		console.log(yourResults);
+	});
 
-// $.get(params, function(data){
+
+// $.getJSON(params, function(data){
 // console.log(data, 'data returned');
 // }, 'jsonp');
 
