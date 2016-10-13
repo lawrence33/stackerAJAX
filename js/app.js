@@ -1,3 +1,6 @@
+//global
+var endPoint = "http://api.stackexchange.com/2.2/questions/unanswered";
+
 // this function takes the question object returned by the StackOverflow request
 // and returns new result to be appended to DOM
 var showQuestion = function(question) {
@@ -57,9 +60,15 @@ var getUnanswered = function(tags) {
 		order: 'desc',
 		sort: 'creation'
 	};
+
+	// $.ajax({...}).done(function(result){...(x,y);
+	// 	$('.search-results').html(searchResults);
+	// 	$.each(result.items, function(i, item) {...});
+	// }) .fail(function(jqXHR, error){var errorElem = showError(error);
+	// 	$('.search-results').append(errorElem);
 	
 	$.ajax({
-		url: "http://api.stackexchange.com/2.2/questions/unanswered",
+		url: endPoint,
 		data: request,
 		dataType: "jsonp",//use jsonp to avoid cross origin issues
 		type: "GET",
@@ -81,6 +90,30 @@ var getUnanswered = function(tags) {
 	});
 };
 
+function topAnswerers (topAns) {
+
+	var params = {
+		tagged: topAns,
+		site: 'stackoverflow',
+		order: 'desc',
+		sort: 'creation',
+		url: endPoint
+	};
+
+	$.ajax({
+		url: endPoint,
+		dataType: 'jsonp',
+		type: 'GET',
+		data: params
+	})
+
+// $.get(params, function(data){
+// console.log(data, 'data returned');
+// }, 'jsonp');
+
+
+};
+
 
 $(document).ready( function() {
 	$('.unanswered-getter').submit( function(e){
@@ -91,4 +124,13 @@ $(document).ready( function() {
 		var tags = $(this).find("input[name='tags']").val();
 		getUnanswered(tags);
 	});
+
+	  $('.inspiration-getter').on('submit', function(e) {
+    e.preventDefault();
+
+    var topAns = $(this).find("input[name='answerers']").val();
+    console.log(topAns, 'tops');
+    topAnswerers(topAns);
+  });
+
 });
