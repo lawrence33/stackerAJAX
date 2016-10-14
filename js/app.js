@@ -1,5 +1,6 @@
 //global
 var endPoint = "http://api.stackexchange.com/2.2/questions/unanswered";
+var myData;
 
 // this function takes the question object returned by the StackOverflow request
 // and returns new result to be appended to DOM
@@ -10,6 +11,7 @@ var showQuestion = function(question) {
 	
 	// Set the question properties in result
 	var questionElem = result.find('.question-text a');
+	// console.log(questionElem,'ques elem');
 	questionElem.attr('href', question.link);
 	questionElem.text(question.title);
 
@@ -60,12 +62,6 @@ var getUnanswered = function(tags) {
 		order: 'desc',
 		sort: 'creation'
 	};
-
-	// $.ajax({...}).done(function(result){...(x,y);
-	// 	$('.search-results').html(searchResults);
-	// 	$.each(result.items, function(i, item) {...});
-	// }) .fail(function(jqXHR, error){var errorElem = showError(error);
-	// 	$('.search-results').append(errorElem);
 	
 	$.ajax({
 		url: endPoint,
@@ -90,14 +86,37 @@ var getUnanswered = function(tags) {
 	});
 };
 
-function topAnswerers (topAns) {
+var showTopAnswerers = function(topPeople){
+
+		// clone the template
+		var resultTemplate =$('.template .answerers').clone();
+		
+		// fill in the template//
+		$('.answerers-name a').html('<p>Name: <a target="_blank" '+
+		'href=http://stackoverflow.com/users/' + topPeople.owner.user_id + ' >' +
+		topPeople.owner.display_name +
+		'</a></p>');
+
+		$('.reputation').text(topPeople.owner.reputation);
+		// console.log(topPeople.owner.reputation, 'reputation');
+		
+		$('.viewed').text(topPeople.view_count);
+		console.log(topPeople.view_count, 'view #');
+	
+		// var votes =  $('.votes').
+
+		return resultTemplate;
+		};
+
+
+var topAnswerers = function(topAns) {
 
 	var params = {
 		tagged: topAns,
 		site: 'stackoverflow',
 		order: 'desc',
-		sort: 'creation',
-		url: endPoint
+		sort: 'votes',
+		// url: endPoint
 	};
 
 	$.ajax({
@@ -108,14 +127,18 @@ function topAnswerers (topAns) {
 	})
 	.done(function(result){
 		var yourResults = 'Your ' +topAns+ ' search, returned ' + result.items.length + ' results.';
-		console.log(result.items);
-		console.log(yourResults);
+		$('.search-results').html('<br>' + '<b>' + yourResults + '</b>');
+
+
+		$.each(result.items, function(i, item){
+			var postData = showTopAnswerers(item); 
+			// console.log(postData);
+			$('.results').append(postData);
+		});
+
+		console.log(yourResults, '1');
+		console.log(result.items, '2');
 	});
-
-
-// $.getJSON(params, function(data){
-// console.log(data, 'data returned');
-// }, 'jsonp');
 
 
 };
