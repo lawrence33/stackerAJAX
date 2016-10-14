@@ -1,5 +1,5 @@
 //global
-var endPoint = "http://api.stackexchange.com/2.2/questions/unanswered";
+var endPoint = "https://api.stackexchange.com/2.2/questions/unanswered";
 
 // this function takes the question object returned by the StackOverflow request
 // and returns new result to be appended to DOM
